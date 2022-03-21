@@ -24,7 +24,7 @@ export const snackbarReducer = (
       return {
         ...state,
         successSnackbarOpen: true,
-        msg: 'Success, open result Page to see result',
+        msg: 'Success, open result page to see result',
       };
     case SNACKBAR_CLOSE:
       return initialSnackbarState;

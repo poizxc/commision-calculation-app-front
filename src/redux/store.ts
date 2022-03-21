@@ -3,11 +3,13 @@ import thunk from 'redux-thunk';
 import { resultReducer } from './resultReducer';
 import { snackbarReducer } from './snackbarReducers';
 
+export const reducer = combineReducers({
+  result: resultReducer,
+  snackbar: snackbarReducer,
+});
+
 export const store = configureStore({
-  reducer: combineReducers({
-    result: resultReducer,
-    snackbar: snackbarReducer,
-  }),
+  reducer,
   devTools: true,
   middleware: [thunk],
 });

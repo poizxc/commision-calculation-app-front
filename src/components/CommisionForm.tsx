@@ -10,13 +10,17 @@ import { CommisionformValues, SupportedCurrencies } from '../types';
 import { RootState } from '../redux/store';
 
 const validationSchema = yup.object({
-  clientId: yup.string().min(1).required('client_id is required'),
-  amount: yup.number().min(0.00001).required('amount is required'),
-  date: yup.date().required('date is required'),
+  clientId: yup.number().min(1).required('client_id is required'),
+  amount: yup
+    .number()
+    .min(0.01)
+    .max(Number.MAX_SAFE_INTEGER)
+    .required('amount is required'),
+  date: yup.date().required('Date is required').typeError('Invalid Date'),
   currency: yup
     .mixed<SupportedCurrencies>()
     .oneOf(Object.values(SupportedCurrencies))
-    .required('currency is required'),
+    .required('Currency is required'),
 });
 
 function CommisionForm() {
@@ -33,31 +37,31 @@ function CommisionForm() {
     currency: SupportedCurrencies.EUR,
   };
 
-  const { values, handleChange, touched, errors, setFieldValue, handleSubmit } =
+  const { values, handleChange, errors, setFieldValue, handleSubmit } =
     useFormik({
       initialValues,
       validationSchema: validationSchema,
       onSubmit: (values) => {
+        console.log({ values });
         dispatch(calculateResult(values));
       },
     });
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Grid container spacing={2}>
           <Grid item xs={8}>
             <TextField
               fullWidth
               id="amount"
               name="amount"
-              label="Amount"
-              type="number"
-              InputProps={{ inputProps: { min: 0.0001, step: '0.0001' } }}
+              label="amount"
               value={values.amount}
               onChange={handleChange}
-              error={touched.amount && Boolean(errors.amount)}
-              helperText={touched.amount && errors.amount}
+              type="number"
+              error={Boolean(errors.amount)}
+              helperText={errors.amount}
             />
           </Grid>
           <Grid item xs={4}>
@@ -66,12 +70,11 @@ function CommisionForm() {
               id="clientId"
               name="clientId"
               label="client_id"
-              type="number"
-              InputProps={{ inputProps: { min: 0 } }}
               value={values.clientId}
               onChange={handleChange}
-              error={touched.clientId && Boolean(errors.clientId)}
-              helperText={touched.clientId && errors.clientId}
+              type="number"
+              error={Boolean(errors.clientId)}
+              helperText={errors.clientId}
             />
           </Grid>
           <Grid item xs={4}>
@@ -83,7 +86,7 @@ function CommisionForm() {
               value={values.currency}
               onChange={handleChange}
               select
-              error={touched.currency && Boolean(errors.currency)}
+              error={Boolean(errors.currency)}
             >
               {Object.values(SupportedCurrencies).map((option) => (
                 <MenuItem key={option} value={option}>
@@ -94,21 +97,22 @@ function CommisionForm() {
           </Grid>
           <Grid item xs={8}>
             <DatePicker
-              label="Date"
+              label="date"
               value={values.date}
               onChange={(value) => setFieldValue('date', value)}
               renderInput={(params) => (
                 <TextField
-                  fullWidth={true}
-                  error={touched.date && Boolean(errors.date)}
-                  helperText={touched.date && errors.date}
                   {...params}
+                  fullWidth={true}
+                  error={Boolean(errors.date)}
+                  helperText={errors.date}
                 />
               )}
             />
           </Grid>
           <Grid item xs={12}>
             <Button
+              data-testid="submit-button"
               disabled={
                 Object.keys(errors).length !== 0 ||
                 submittingStatus === 'loading'
@@ -122,8 +126,8 @@ function CommisionForm() {
             </Button>
           </Grid>
         </Grid>
-      </form>
-    </LocalizationProvider>
+      </LocalizationProvider>
+    </form>
   );
 }
 

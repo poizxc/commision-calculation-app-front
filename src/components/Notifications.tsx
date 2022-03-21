@@ -19,8 +19,9 @@ const Notifications = () => {
 
   return (
     <Snackbar
+      className={`snackbar--${severity}`}
       open={isOpen}
-      autoHideDuration={3000}
+      autoHideDuration={4000}
       onClose={handleClose}
       TransitionProps={{
         exit: false,
