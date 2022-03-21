@@ -22,7 +22,7 @@ or
 yarn install
 ```
 
-after instalation it can be started via start script:
+after instalation it can be started via start script (it should open application on localhost:3000):
 
 ```
 yarn start
