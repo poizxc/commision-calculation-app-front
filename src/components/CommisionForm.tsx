@@ -42,7 +42,6 @@ function CommisionForm() {
       initialValues,
       validationSchema: validationSchema,
       onSubmit: (values) => {
-        console.log({ values });
         dispatch(calculateResult(values));
       },
     });
